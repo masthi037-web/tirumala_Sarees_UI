@@ -45,6 +45,13 @@ export const orderService = {
         });
     },
 
+    createForRazorpay: async (data: SaveOrderRequest) => {
+        return apiClient<any>('/order/create-for-razorpay', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+    },
+
     getPaymentStatus: async (orderId: string) => {
         return apiClient<any>(`/order/payment-status?orderId=${orderId}`, {
             method: 'GET',

@@ -1,4 +1,4 @@
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8080/api/v1/manaBuy-services';
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.manabuy.in/api/v1/manaBuy-services';
 
 interface ApiRequestOptions extends RequestInit {
     params?: Record<string, string | number | boolean>;

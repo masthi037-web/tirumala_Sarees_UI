@@ -287,7 +287,7 @@ export default function HomeClient({ initialCategories, companyDetails, fetchAll
         router.push(`/product/${productId}`);
     };
 
-    const visibleCategories = tenant.id.toLowerCase().includes('sandhya') ? activeCategories.slice(0, 2) : activeCategories;
+    const visibleCategories = activeCategories;
     const spotlightProducts = baseProducts.slice(0, 4);
     const curatedProducts = famousProducts.length > 0 ? famousProducts.slice(0, 3) : baseProducts.slice(0, 3);
     const heroStats = [
