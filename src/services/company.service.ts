@@ -7,10 +7,10 @@ export const fetchCompanyDetails = cache(async (companyDomain: string): Promise<
         const isLocalhost = (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) ||
                             (!companyDomain || companyDomain.includes('localhost') || companyDomain.includes('127.0.0.1'));
 
-        // If localhost, default to fetching tirumalacollections.com details from backend
+        // If localhost, default to fetching tirumalacollections details from backend
         let domainToFetch = companyDomain;
         if (isLocalhost) {
-            domainToFetch = 'tirumalacollections.com';
+            domainToFetch = 'tirumalacollections';
         }
 
         try {
