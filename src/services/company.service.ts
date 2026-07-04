@@ -5,12 +5,36 @@ import { CompanyDetails } from '@/lib/api-types';
 export const fetchCompanyDetails = cache(async (companyDomain: string): Promise<CompanyDetails | null> => {
     try {
         const isLocalhost = (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) ||
-                            (process.env.NODE_ENV === 'development' || !companyDomain || companyDomain.includes('localhost') || companyDomain.includes('127.0.0.1'));
+                            (!companyDomain || companyDomain.includes('localhost') || companyDomain.includes('127.0.0.1'));
 
+        // If localhost, default to fetching tirumalacollections.com details from backend
+        let domainToFetch = companyDomain;
         if (isLocalhost) {
-            console.log("Dev Mode: Returning mock company details for domain:", companyDomain);
+            domainToFetch = 'tirumalacollections.com';
+        }
+
+        try {
+            const data = await apiClient<CompanyDetails>('/company/public/get', {
+                params: { companyDomain: domainToFetch },
+                next: { revalidate: 300, tags: ['company'] } // 5 minutes cache
+            });
+
+            if (data) {
+                console.log("Fetched company details from backend successfully for:", domainToFetch);
+                if (isLocalhost) {
+                    data.companyDomain = companyDomain || "localhost";
+                }
+                return data;
+            }
+        } catch (apiError) {
+            console.error("Failed to fetch company details from backend, falling back to mock:", apiError);
+        }
+
+        // Fallback mock details if API fails on localhost
+        if (isLocalhost) {
+            console.log("Dev Mode: Returning fallback mock company details for domain:", companyDomain);
             return {
-                companyId: "mock-company-id",
+                companyId: "tirumalasarees",
                 companyName: "Tirumala Sarees",
                 companyDomain: companyDomain || "localhost",
                 companyPhone: "9988776655",
@@ -50,19 +74,7 @@ export const fetchCompanyDetails = cache(async (companyDomain: string): Promise<
             } as CompanyDetails;
         }
 
-        const data = await apiClient<CompanyDetails>('/company/public/get', {
-            params: { companyDomain },
-            next: { revalidate: 300, tags: ['company'] } // 5 minutes cache
-        });
-
-        if (!data) {
-            console.warn(`Company details API returned null for domain: ${companyDomain}`);
-            return null;
-        }
-
-        console.log("Company Delivery Between:", data.deliveryBetween);
-        console.log(data.companyCoupon + " coupon");
-        return data;
+        return null;
     } catch (error) {
         console.error('Error fetching company details:', error);
         return null;
